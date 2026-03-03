@@ -5,8 +5,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'PNP-LLM-XAI',
+  tagline: 'Plug-and-Play Explainability AI for LLM',
   favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -68,6 +68,28 @@ const config: Config = {
       } satisfies Preset.Options,
     ],
   ],
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'tasks',
+        path: 'tasks',
+        routeBasePath: 'tasks',
+        sidebarPath: './sidebarsTasks.ts',
+      },
+    ],
+    [
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        hashed: true,
+        indexDocs: true,
+        indexBlog: true,
+        indexPages: false,
+        docsRouteBasePath: ['docs', 'tasks'],
+        highlightSearchTermsOnTargetPage: true,
+      },
+    ],
+  ],
 
   themeConfig: {
     // Replace with your project's social card
@@ -76,9 +98,9 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'My Site',
+      title: 'PNP-LLM-XAI',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'PNP-LLM-XAI Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -88,7 +110,18 @@ const config: Config = {
           position: 'left',
           label: 'Tutorial',
         },
+        {
+          type: 'docSidebar',
+          sidebarId: 'tasksSidebar',
+          docsPluginId: 'tasks',
+          position: 'left',
+          label: 'Tasks',
+        },
         {to: '/blog', label: 'Blog', position: 'left'},
+        {
+          type: 'search',
+          position: 'right',
+        },
         {
           href: 'https://github.com/facebook/docusaurus',
           label: 'GitHub',
@@ -142,8 +175,8 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+    theme: prismThemes.github,
+    darkTheme: prismThemes.dracula,
     },
   } satisfies Preset.ThemeConfig,
 };
