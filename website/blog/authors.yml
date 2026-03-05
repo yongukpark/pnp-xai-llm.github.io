@@ -11,16 +11,16 @@ bumjin:
     newsletter: https://www.kbs.re.kr
 
 artyom:
-  name: Artyom Artyom Stitsyuk
+  name: Artyom Stitsyuk
   title: PhD Student, KAIST
-  url: https://test.com
-  image_url: https://test.com
+  url: https://linkedin.com/in/stitsyuk
+  image_url: https://avatars.githubusercontent.com/u/33799550?v=4
   page: true
   socials:
-    x: artyomstitsyuk
-    linkedin: artyomstitsyuk
-    github: artyomstitsyuk
-    newsletter: https://test.com
+    x: stitsyuk
+    linkedin: stitsyuk
+    github: stitsyuk
+    newsletter: https://www.kbs.re.kr
 
 jongeun:
   name: Jongeun Baek
