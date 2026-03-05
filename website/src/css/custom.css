@@ -45,7 +45,7 @@
 .blog-list-header,
 .blog-list-row {
   display: grid;
-  grid-template-columns: 10rem minmax(0, 1fr) 10rem;
+  grid-template-columns: 8.5rem minmax(0, 1fr) minmax(12rem, 1.1fr);
   gap: 1rem;
   align-items: center;
 }
@@ -73,6 +73,10 @@
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .blog-list-col-title a {
@@ -88,7 +92,17 @@
 .blog-list-col-author {
   color: var(--ifm-color-emphasis-700);
   font-size: 0.95rem;
+  min-width: 0;
+}
+
+.blog-list-col-date {
   white-space: nowrap;
+}
+
+.blog-list-col-author {
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.35;
 }
 
 @media (max-width: 996px) {

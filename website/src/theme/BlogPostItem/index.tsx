@@ -22,6 +22,7 @@ export default function BlogPostItem({children, className}: Props): ReactNode {
 
   if (!isBlogPostPage) {
     const {date, title, permalink, authors} = metadata;
+    const authorText = formatAuthors(authors);
     return (
       <BlogPostItemContainer className={clsx('blog-list-row-item', className)}>
         <div className="blog-list-row">
@@ -31,7 +32,9 @@ export default function BlogPostItem({children, className}: Props): ReactNode {
           <h2 className="blog-list-col-title">
             <Link to={permalink}>{title}</Link>
           </h2>
-          <div className="blog-list-col-author">{formatAuthors(authors)}</div>
+          <div className="blog-list-col-author" title={authorText}>
+            {authorText}
+          </div>
         </div>
       </BlogPostItemContainer>
     );
