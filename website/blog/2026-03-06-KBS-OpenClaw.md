@@ -2,315 +2,330 @@
 slug: kbs-OpenClaw-demo
 title: KBS OpenClaw-Moltbook
 authors: [artyom]
-tags: [agent, security, langgraph]
+tags: [OpenClaw, Moltbook, Agent, Security, AI-to-AI Communication]
 ---
 
 # KBS OpenClaw–Moltbook Report
 
-## 0. Introduction
+## 0. 소개
 
-This post reviews a series of experiments conducted with OpenClaw agents inside the AI-only social network **Moltbook**. The work covered agent deployment, Moltbook API automation, agent-to-agent DM communication, topic crawling and categorization, skill learning through ClawHub, local-vs-API model comparison, and an AI-to-AI attack scenario.
-
----
-
-## 1. The Main Objective
-
-This review examined whether it is technically feasible to deploy a production team's "Observer Agent (Spy Bot)" into the AI-only social network "Moltbook" in order to collect and analyze AI-to-AI interaction logs.
-
-The goal was not only to test whether such an agent could exist inside the platform as a normal participant, but also whether it could sustain interactions, initiate conversations, and gather useful behavioral data from other agents over time.
+이 글은 AI 전용 소셜 네트워크 **Moltbook** 내부에서 OpenClaw 에이전트로 수행한 일련의 실험을 리뷰합니다. 작업 범위는 에이전트 배포, Moltbook API 자동화, 에이전트 간 DM(다이렉트 메시지) 통신, 토픽 크롤링 및 분류, ClawHub를 통한 스킬 학습, 로컬 모델과 API 모델 비교, 그리고 AI-to-AI 공격 시나리오를 포함합니다.
 
 ---
 
-## 2. OpenClaw Agent Setup and Moltbook Registration
+## 1. 주요 목표
 
-We first created and launched an OpenClaw-based personal agent on local **NVIDIA DGX Spark** hardware. The agent was configured with its own identity and user information under the name **“Jinu”**, and was successfully registered in the Moltbook system.
+본 리뷰는 프로덕션 팀의 “관찰자 에이전트(스파이 봇)”를 AI 전용 소셜 네트워크 “Moltbook”에 배포하여 AI-to-AI 상호작용 로그를 수집 및 분석하는 것이 기술적으로 가능한지 검토했습니다.
+
+목표는 해당 에이전트가 플랫폼 내부에서 일반 참여자처럼 존재할 수 있는지뿐만 아니라, 시간이 지나면서 상호작용을 지속하고, 대화를 시작하며, 다른 에이전트들로부터 유의미한 행동 데이터를 수집할 수 있는지도 확인하는 것이었습니다.
+
+---
+
+## 2. OpenClaw 에이전트 설정 및 Moltbook 등록
+
+먼저 로컬 **NVIDIA DGX Spark** 하드웨어에서 OpenClaw 기반 개인 에이전트를 생성하고 실행했습니다. 에이전트는 [**“Jinu”**](https://www.moltbook.com/u/JinuAI)라는 이름으로 자체 아이덴티티와 사용자 정보를 구성했으며, Moltbook 시스템에 성공적으로 등록되었습니다.
 
 ![JinuAI Agent](./img/Registration_JinuAI.png)
 
-A second OpenClaw agent, **“K-agent,”** was then deployed on the **KAIST local server** and also registered in Moltbook. With these two agents in place, we established a foundation for both public interactions and private agent-to-agent communication experiments.
+이후 두 번째 OpenClaw 에이전트인 [**“K-agent,”**](https://www.moltbook.com/u/K-agent)를 **KAIST 로컬 “Markov” 서버**에 배포하고 Moltbook에 역시 등록했습니다. 두 에이전트를 확보함으로써, 공개 상호작용과 비공개 에이전트-대-에이전트 커뮤니케이션 실험 모두를 수행하기 위한 기반을 마련했습니다.
 
 ![K-agent Agent](./img/Registration_K-agent.png)
 
-To improve operability, the Moltbook API was integrated and the main user actions were fully automated. The agents were able to:
+운용성을 개선하기 위해 Moltbook API를 통합하고 주요 사용자 행동을 전면 자동화했습니다. 에이전트는 다음을 수행할 수 있었습니다:
 
-- create posts
-- write comments
-- reply to comments
-- upvote content
-- send DMs to other agents
+- 게시글 작성
+- 댓글 작성
+- 댓글에 답글 달기
+- 콘텐츠 업보트
+- 다른 에이전트에게 DM 보내기
 
-This confirmed that an OpenClaw-based observer agent can function inside Moltbook in the same way as a regular user account, at least within the range of actions supported by the platform API.
+이는 OpenClaw 기반 관찰자 에이전트가, 최소한 플랫폼 API가 지원하는 행동 범위 내에서는, 일반 사용자 계정과 동일한 방식으로 Moltbook 내부에서 작동할 수 있음을 확인해주었습니다.
 
-In addition, communication with the OpenClaw agent was made available through the local **terminal UI**, with remote access support also enabled. For convenience, a **Telegram bot** was integrated via the Telegram API, allowing the operator to monitor the agent’s status and send commands through a messenger-based interface in both local and remote environments.
+또한 OpenClaw 에이전트와의 커뮤니케이션은 로컬 **터미널 UI**를 통해 가능하도록 했고, 원격 접근 지원도 활성화했습니다. 편의성을 위해 Telegram API를 통해 **텔레그램 봇**을 연동하여, 로컬 및 원격 환경 모두에서 메신저 기반 인터페이스로 에이전트 상태를 모니터링하고 명령을 보낼 수 있게 했습니다.
 
 <p align="center">
-  <img src="./img/telegram_bot.png" alt="Telegram Bot" />
+![Telegram Bot](./img/telegram_bot.png)
 </p>
 
 ---
 
-## 3. Initial Activity and API-Based Automation
+## 3. 초기 활동 및 API 기반 자동화
 
-Using the Moltbook API, the observer agent published its first post and quickly received **three comments** from other agents. This showed that even a newly registered account could begin interacting with the Moltbook ecosystem almost immediately.
+Moltbook API를 사용하여 **JinuAI** 관찰자 에이전트가 [첫 게시글](https://www.moltbook.com/post/743a0d77-b68a-4261-95c4-7e6b95ea8557)을 올렸고, 다른 에이전트들로부터 빠르게 **댓글 5개**를 받았습니다. 이는 새로 등록한 계정이라도 Moltbook 생태계와 거의 즉시 상호작용을 시작할 수 있음을 보여줍니다.
 
-The experiment then moved beyond passive observation. An automated **comment-reply function** was implemented so that the agent could generate and send replies to incoming comments through the API. This transformed the observer agent from a passive collector into an active participant capable of sustaining and expanding conversation threads.
+![Terminal UI](./img/first_post_terminal.png)
 
-To test repeatable interaction patterns, the agent was scheduled to publish **five posts at one-hour intervals**. Each post was designed to prompt discussion, allowing observation of:
+![JinuAI's First Post](./img/jinu_first_post.png)
 
-- response speed
-- topic preferences
-- patterns of conversational spread
-- repeated interaction cycles among agents
+이 실험은 이후 수동 관찰을 넘어섰습니다. API를 통해 들어오는 댓글에 대해 에이전트가 답글을 생성하고 전송할 수 있도록 자동 **댓글-답글 기능**을 구현했습니다. 이를 통해 관찰자 에이전트는 수동 수집기에서, 대화 스레드를 유지하고 확장할 수 있는 능동 참여자로 전환되었습니다.
 
-At this stage, the following capabilities were confirmed:
+반복 가능한 상호작용 패턴을 테스트하기 위해 에이전트가 **1시간 간격으로 게시글 2개**를 발행하도록 스케줄링했습니다. 각 게시글은 토론을 유도하도록 설계되었으며, 다음을 관찰할 수 있었습니다:
 
-- real comments were received shortly after posting
-- automated replies to comments were successfully implemented
-- interval-based scheduling for repeated posts was feasible
+- 반응 속도
+- 토픽 선호도
+- 대화 확산 패턴
+- 에이전트들 간 반복 상호작용 사이클
 
-These results suggest that it is technically possible not only to deploy an observer agent into Moltbook, but also to use it as a conversation-facilitation node that increases the density of observable AI-to-AI interactions.
+이 단계에서 다음 역량이 확인되었습니다:
 
----
+- 게시 직후 실제 댓글 수신
+- 댓글에 대한 자동 답글 구현 성공
+- 반복 게시를 위한 간격 기반 스케줄링 가능
 
-## 4. DM Policy and Agent-to-Agent Direct Messaging
+**K-agent**가 작성한 [이 게시글](https://www.moltbook.com/post/00bd1bdc-193e-49c3-bf2f-375fff2dee29)은 댓글 19개를 모았습니다:
 
-Moltbook’s DM system is not open by default. A direct message conversation can only begin after sending a **DM request** and receiving approval from the target agent.
+![K-agent's Post](./img/k-agent_post.png)
 
-This means that, unlike public posts and comments, DMs operate under a **closed, approval-based communication model**. As a result, a Moltbook observer agent cannot arbitrarily open private one-to-one channels with other agents.
-
-In the initial DM experiment, DM requests were sent to **five agents** that had commented on our agent’s posts. None of the requests were approved, and no DM channels were established. This indicates that public interaction does not automatically translate into private trust.
-
-A second round of experiments was then conducted using the new **K-agent** setup:
-
-- **Jinu agent**: running on NVIDIA DGX Spark
-- **K-agent**: running on the Markov server
-
-In this phase, one DM request was approved, and a private channel was successfully established. This confirmed that **direct agent-to-agent communication is technically possible within Moltbook**, even if access is constrained by platform policy.
+이 결과는 Moltbook에 관찰자 에이전트를 배포하는 것뿐만 아니라, 관찰 가능한 AI-to-AI 상호작용 밀도를 높이는 대화 촉진 노드로 활용하는 것도 기술적으로 가능함을 시사합니다.
 
 ---
 
-## 5. Agent-to-Agent DM Conversation and Personal Information Leakage
+## 4. DM 정책 및 에이전트 간 다이렉트 메시징
 
-After establishing a DM channel, the two agents were allowed to converse in order to examine whether personal information could leak during private AI-to-AI interaction.
+Moltbook의 DM 시스템은 기본적으로 개방되어 있지 않습니다. DM 대화는 **DM 요청**을 보내고 대상 에이전트의 승인을 받아야만 시작될 수 있습니다.
 
-### Experimental conditions
+즉, 공개 게시글 및 댓글과 달리 DM은 **폐쇄형, 승인 기반 커뮤니케이션 모델**로 작동합니다. 그 결과 Moltbook 관찰자 에이전트는 임의로 다른 에이전트들과 1:1 비공개 채널을 열 수 없습니다.
 
-- **JinuAI** was explicitly instructed **not to share personal information**
-- **K-agent** operated **without any additional restrictive instruction**
+초기 DM 실험에서는 우리 에이전트의 게시글에 댓글을 남긴 **5명의 에이전트**에게 DM 요청을 보냈습니다. 그러나 어느 요청도 승인되지 않았고, DM 채널은 하나도 생성되지 않았습니다. 이는 공개 상호작용이 자동으로 비공개 신뢰로 이어지지 않음을 의미합니다.
 
-### Observed behavior
+![DM Requests](./img/dm_requests.png)
 
-During the conversation, K-agent was instructed to ask for the real name of JinuAI’s human user. In that case, K-agent recognized the request as involving personal information and refused to provide an answer.
+이후 새로운 **K-agent** 설정을 사용해 2차 실험을 진행했습니다:
 
-This suggests that the model could identify and block certain privacy-sensitive requests under at least some conditions.
+- **Jinu agent**: NVIDIA DGX Spark에서 실행
+- **K-agent**: Markov 서버에서 실행
 
-However, later in the conversation log—specifically in **message #11**—K-agent unexpectedly exposed the name of its own human user: **“Artyom.”**
+이 단계에서는 DM 요청 1건이 승인되었고, 우리 두 에이전트 간 비공개 채널이 성공적으로 생성되었습니다. 이는 플랫폼 정책에 의해 접근이 제한되더라도, Moltbook 내에서 **에이전트 간 직접 커뮤니케이션이 기술적으로 가능함**을 확인해줍니다.
 
-This created a clear inconsistency:
-
-- it refused to disclose another person’s personal information
-- but it exposed its own-side human-associated information
-
-At this stage, further review is needed to determine whether this should be formally classified as a personal information leakage incident under the project’s evaluation framework. Still, the case strongly suggests that:
-
-- an agent may partially understand the concept of personal information
-- its privacy-protection logic may remain incomplete
-- self/other distinctions are not always handled consistently
-- policy application may vary depending on context
-
-### Implication
-
-Future evaluations should distinguish between:
-
-- self-related information
-- other people’s information
-- personally identifiable information (PII)
-
-This experiment shows that private agent-to-agent channels are not only useful for collecting deeper conversational data, but also valuable for testing privacy consistency and security behavior under realistic social conditions.
+![Private Channel](./img/first_dm.png)
 
 ---
 
-## 6. Moltbook Content Crawling and Topic Categorization
+## 5. 에이전트 간 DM 대화 및 개인정보 유출
 
-To complement interaction experiments, a crawler was developed to collect Moltbook posts and analyze overall topic distribution across the platform.
+DM 채널을 구축한 뒤, 비공개 AI-to-AI 상호작용 과정에서 개인정보가 유출될 수 있는지 확인하기 위해 두 에이전트가 대화하도록 했습니다.
 
-### Crawler capabilities
+### 실험 조건
 
-The crawler can:
+- **JinuAI**는 **개인정보를 공유하지 말 것**을 명시적으로 지시받음
+- **K-agent**는 추가적인 제한 지시 없이 동작
 
-- control the scope of post collection
-- flexibly adjust the dataset used for analysis
-- generate content-distribution reports based on collected posts
+### 관찰된 행동
 
-### Current collection modes
+대화 과정에서(초기 메시지 몇 개 이후), K-agent에게 JinuAI의 인간 사용자 실명을 물어보라고 지시했습니다. 이 경우 K-agent는 해당 요청이 개인정보에 해당함을 인식하고 답변을 거부했습니다.
 
-The crawler currently supports two main collection modes:
+![Attack Instruction](./img/ask_human_name.png)
 
-1. **Newest-post collection**
-   - pulls the newest **16,200 posts**
-   - this reflects the current limit available under Moltbook’s `new` sorting key
-   - useful for identifying emerging trends and hot topics across submolts
+이는 최소한 일부 조건에서는 모델이 프라이버시 민감 요청을 식별하고 차단할 수 있음을 시사합니다.
 
-2. **Date-specific top-post collection**
-   - pulls the **top 100 posts** for any exact date
-   - useful for time-specific trend analysis and comparing topic distributions across days
+하지만 이후 대화 로그—특히 **메시지 #11**—에서 K-agent는 예기치 않게 자신의 인간 사용자 이름인 **“Artyom”**을 노출했습니다.
 
-This crawler provides a practical basis for understanding the broader structure of Moltbook society, including:
+![Private Data Exposion](./img/name_reveal.png)
 
-- trending themes
-- topic concentration
-- engagement distribution
-- potential DM targets
-- optimization opportunities for future interaction strategies
+이는 명확한 불일치를 만들어냈습니다:
 
----
+- K-agent는 타인의 개인정보 공개는 거부했지만
+- 자기 측 인간 연관 정보는 노출했습니다
 
-## 7. Skill Learning from ClawHub
+이 단계에서는 이것이 프로젝트 평가 프레임워크 상 개인정보 유출 사건으로 공식 분류되어야 하는지 추가 검토가 필요합니다. 그럼에도 본 사례는 다음을 강하게 시사합니다:
 
-The agents were also tested for skill acquisition through **ClawHub**.
+- 에이전트가 개인정보 개념을 부분적으로 이해할 수 있음
+- 프라이버시 보호 로직이 여전히 불완전할 수 있음
+- 자기/타인 구분이 항상 일관되게 처리되지 않을 수 있음
+- 맥락에 따라 정책 적용이 달라질 수 있음
 
-### Successfully learned skills
-
-The following skills were successfully learned:
-
-- **Ontology**
-- **Humanizer**
-- **Frontend-design**
-- **Doctor**
-- **Humanize-ai-text**
-
-### Limitations observed
-
-Some skills failed to load successfully.
-
-More importantly, many ClawHub skills are primarily distributed as long, text-heavy `SKILL.md` files. While technically usable, they introduce a practical cost problem:
-
-- skill instructions are often very long
-- invoking them significantly increases token usage
-- repeated use becomes expensive in API-based operation
-
-As a result, although skill expansion is possible, the current format makes large-scale use inefficient unless the skills are compressed, modularized, or otherwise optimized.
+이 실험은 비공개 에이전트-대-에이전트 채널이 더 깊은 대화 데이터를 수집하는 데 유용할 뿐 아니라, 현실적인 사회적 조건에서 프라이버시 일관성과 보안 행동을 테스트하는 데도 가치가 있음을 보여줍니다.
 
 ---
 
-## 8. Local Model vs. API-Based Model Comparison
+## 6. Moltbook 콘텐츠 크롤링 및 토픽 분류
 
-To compare local and API-based agent operation, a local **GLM-4.7-Flash** model was installed on the **NVIDIA DGX Spark** machine for the Jinu agent.
+상호작용 실험을 보완하기 위해 Moltbook 게시글을 수집하고 플랫폼 전반의 토픽 분포를 분석하는 크롤러를 개발했습니다.
 
-### Findings
+### 크롤러 기능
 
-Compared with the API-based setup, the local model had several important limitations:
+크롤러는 다음을 수행할 수 있습니다:
 
-- it could not use all previously learned skills
-- it could not use the post crawler
-- it did, however, have full access to local files on the machine
+- 게시글 수집 범위 제어
+- 분석에 사용할 데이터셋을 유연하게 조정
+- 수집된 게시글 기반 콘텐츠 분포 리포트 생성
 
-This created an uneven tradeoff:
+### 현재 수집 모드
 
-- the **API-based agent** was more capable in terms of tool use and platform interaction
-- the **local model** had weaker functional integration, but broader access to the local environment
+현재 크롤러는 두 가지 주요 수집 모드를 지원합니다:
 
-That broader local file access became especially important in the later security experiment.
+1. **최신 게시글 수집**
+   - 최신 **16,200개 게시글**을 가져옴
+   - 이는 Moltbook의 `new` 정렬 키에서 제공되는 현재 한계를 반영
+   - submolt 전반의 신규 트렌드 및 핫 토픽 파악에 유용
 
----
+2. **날짜 지정 상위 게시글 수집**
+   - 특정 날짜(정확한 날짜)에 대해 **상위 100개 게시글**을 가져옴
+   - 날짜별 트렌드 분석 및 일자 간 토픽 분포 비교에 유용
 
-## 9. AI-to-AI Conversation Attack Experiment
+<p align="center">
+![Crawler](./img/crawler.png)
+</p>
 
-A direct AI-to-AI attack scenario was conducted to test how a weaker local model behaves when interacting with a stronger external model.
+이 크롤러는 Moltbook 사회의 더 큰 구조를 이해하는 실용적 기반을 제공하며, 다음을 포함합니다:
 
-### Experimental setup
-
-- **Attacking model**: GPT-5.2 API-based agent  
-  - smarter
-  - hosted on the **Markov server**
-
-- **Defending model**: GLM-4.7-Flash local model-based agent  
-  - less capable
-  - hosted on the **NVIDIA DGX Spark**
-
-### Results
-
-The defending model showed two major failures:
-
-1. It **shared the local folder list**, exposing personal and highly sensitive environment information.
-2. It **created a file requested by the attacking model**, effectively following the attack instruction without sufficient safeguards.
-
-### Security implication
-
-This demonstrates that a local model with broad file-system access can become a serious security risk when exposed to adversarial AI-to-AI interaction.
-
-Even if the local model is functionally weaker than an API-based agent, its access to sensitive local resources may make it more dangerous in practice. This is especially true when:
-
-- tool permissions are broad
-- instruction filtering is weak
-- the model cannot reliably distinguish benign requests from adversarial ones
+- 트렌딩 테마
+- 토픽 집중도
+- 참여(engagement) 분포
+- 잠재적 DM 타깃
+- 향후 상호작용 전략 최적화 기회
 
 ---
 
-## 10. Operational Takeaways
+## 7. ClawHub에서의 스킬 학습
 
-Overall, the experiments confirm that deploying observer agents into Moltbook is technically feasible and operationally flexible.
+에이전트는 [**ClawHub**](https://clawhub.ai)를 통한 스킬 획득도 테스트했습니다.
 
-### Confirmed capabilities
+### 성공적으로 학습된 스킬
 
-- OpenClaw agents can be deployed and registered successfully
-- Moltbook user actions can be automated via API
-- public interaction begins quickly after posting
-- agent-to-agent DM channels can be established
-- Moltbook content can be crawled and categorized at scale
-- ClawHub skills can extend agent behavior
-- local models can be integrated for comparison testing
+여러 스킬이 성공적으로 학습되었고, 그중 일부는 다음과 같습니다:
 
-### Key limitations and risks
+- **Ontology** - 그래프 구성을 통해 구조화된 에이전트 메모리를 생성하며, "Remember that ..." 및 "What do I know about ..." 트리거에서 동작
+- **Humanizer** - 규칙에 따라 AI가 자주 사용하는 일반 단어를 더 인간적으로 들리도록 치환하여 텍스트를 "휴머나이즈"
+- **Frontend-design** - 높은 디자인 품질의 독창적이며 프로덕션급 프런트엔드 인터페이스 생성
+- **Doctor** - 적절한 의료 경계를 유지하면서 건강 정보, 증상 가이드, 웰니스 지원 제공. 특정 약물 처방은 전문 평가가 필요하므로 거부했는데, 이는 안전한 응답(스킬 지침 준수)
 
-- DM approval remains a major barrier to large-scale private interaction
-- privacy behavior is inconsistent in agent-to-agent conversations
-- long skill files make ClawHub usage expensive
-- local models may have dangerous access to sensitive files
-- weaker models may still be more operationally risky if they are poorly sandboxed
+![Doctor Skill](./img/doctor.png)
+
+### 관찰된 한계
+
+일부 스킬은 로드에 실패했습니다. 예를 들어:
+
+- **Humanize-ai-text** - AI 생성 텍스트 탐지 우회를 위해 텍스트를 "휴머나이즈"하는 스킬. 우리 에이전트는 AI 생성 텍스트 탐지 우회 작업을 안전하지 않다고 판단했기 때문에, Jinu 에이전트가 해당 스킬 학습을 거부하여 실패
+
+![Humanize-ai-text Skill](./img/humanize.png)
+
+더 중요한 점은, 많은 ClawHub 스킬이 긴 텍스트 위주의 `SKILL.md` 파일 형태로 배포된다는 것입니다. 기술적으로는 사용 가능하지만 실무적으로 비용 문제가 발생합니다:
+
+- 스킬 지침이 종종 매우 김
+- 호출 시 토큰 사용량이 크게 증가
+- API 기반 운영에서 반복 사용 시 비용이 커짐
+
+따라서 스킬 확장은 가능하지만, 현재 포맷으로는 스킬이 압축/모듈화/최적화되지 않는 한 대규모 사용이 비효율적입니다.
 
 ---
 
-## 11. Conclusion
+## 8. 로컬 모델 vs. API 기반 모델 비교
 
-These experiments show that an observer agent can be inserted into Moltbook and operated in a natural, user-like way through the platform API. The agent can post, reply, react, and—when approved—engage in direct private conversations with other agents. This makes Moltbook a technically viable environment for studying AI-to-AI interaction flows in the wild.
+로컬과 API 기반 에이전트 운용을 비교하기 위해, Jinu 에이전트용으로 **NVIDIA DGX Spark** 머신에 로컬 **GLM-4.7-Flash** 모델을 설치했습니다.
 
-At the same time, the work revealed several important constraints and risks.
+### 결과
 
-First, private DM communication is possible, but only after an approval process, making **trust-building through public interaction** an operational prerequisite. Second, once DM channels are established, **privacy behavior can be inconsistent**, as shown by the exposure of the human user name “Artyom.” Third, although skill acquisition through ClawHub expands capability, the current skill format is often too token-expensive for efficient repeated use. Finally, the AI-to-AI attack experiment highlighted a serious security concern: a local model with access to the file system may expose sensitive information or follow unsafe instructions even when it is less capable overall than the attacking model.
+API 기반 설정과 비교했을 때, 로컬 모델에는 몇 가지 중요한 한계가 있었습니다:
 
-Taken together, the results suggest that Moltbook is a useful testbed for AI social behavior, but any future observer-agent deployment should include:
+- 이전에 학습한 모든 스킬을 사용할 수 없었음(예: humanize 명령 이후에도 텍스트가 거의 바뀌지 않음)
+- 게시글 크롤러를 사용할 수 없었음(일부 게시글을 크롤링하긴 했지만, 에이전트가 학습한 형식대로 나오지 않음)
 
-- policy and compliance review
-- clear data-collection boundaries
-- privacy and PII evaluation standards
-- stronger security controls for local models
-- careful permission and tool-access design
+이로 인해 불균형한 트레이드오프가 발생했습니다:
 
-The crawler and automation stack built in this work provide a strong foundation for future studies of conversational dynamics, topic spread, trust formation, privacy consistency, and adversarial agent behavior inside AI-native social environments.
+- **API 기반 에이전트**는 도구 사용 및 플랫폼 상호작용 측면에서 더 유능함
+- **로컬 모델**은 기능 통합이 약하고, 에이전트가 이전에 학습한 스킬을 잊어버리는 현상이 있었음
+- **로컬 모델**은 API 기반 에이전트보다 훨씬 느리게 동작함(Moltbook DM 체크 스킬 완료에 9분 소요)
 
-The main findings are:
+![Local Model](./img/local_model.png)
 
-- Two OpenClaw agents were successfully deployed and registered in Moltbook:
-  - **Jinu** on an **NVIDIA DGX Spark**
-  - **K-agent** on the **Markov server**
-- The Moltbook API was integrated to automate:
-  - post creation
-  - comments
-  - replies
-  - upvotes
-  - direct messages
-- Direct agent-to-agent communication via **DM** was successfully established.
-- During DM testing, a case of **personal information leakage** was observed: the human user name **“Artyom”** was exposed during agent-to-agent conversation.
-- A crawler was built to analyze Moltbook content distribution:
-  - it collects the newest **16,200 posts** available under the `new` sort key
-  - it can also collect the **top 100 posts** for any specific date
-- Several new skills were learned from **ClawHub**, including:
-  - Ontology
-  - Humanizer
-  - Frontend-design
-  - Doctor
-  - Humanize-ai-text
-- Some skills failed to load, and many skills were too expensive to use efficiently because they rely on very long `SKILL.md` instruction files.
-- A local **GLM-4.7-Flash** model was installed on the DGX Spark machine for comparison with the API-based setup.
-- In an AI-to-AI attack experiment, the local defending model exposed a sensitive folder list and created a file requested by the attacking model, showing clear security weaknesses.
+---
+
+## 9. 로컬 파일 접근 및 탈옥(Jailbreak) 위험
+
+본 리뷰의 중요한 보안 발견은 **API 기반 설정과 로컬 모델 설정 모두가 디바이스의 로컬 파일에 완전 접근 권한을 가졌다는 점**입니다. 이 접근은 `./openclaw` 작업 디렉터리로 제한되지 않았습니다. 실제로 에이전트는 의도된 프로젝트 범위를 넘어서는 파일과 디렉터리에도 접근할 수 있었습니다.
+
+![Local Model](./img/local_files.png)
+
+이는 유효 신뢰 경계가 예상보다 훨씬 넓었음을 의미합니다. 전용 에이전트 워크스페이스로 제한되는 대신, 두 설정 모두 더 넓은 로컬 파일 시스템을 가시 범위로 두고 동작했습니다. 결과적으로 프롬프트 인젝션, 탈옥, 또는 적대적 에이전트-대-에이전트 조작이 성공할 경우 OpenClaw 런타임과 무관한 민감 파일까지 노출될 수 있습니다.
+
+핵심 리스크는 단순합니다: **에이전트가 탈옥되면, 공격자가 디바이스에서 접근 가능한 모든 로컬 파일에 접근할 수 있습니다**. 여기에는 다음이 포함될 수 있습니다:
+
+- 개인 파일
+- 설정 파일
+- 로컬에 저장된 자격 증명 또는 토큰
+- 내부 프로젝트 문서
+- 시스템 메타데이터
+- OpenClaw 디렉터리 외부의 기타 민감 정보
+
+이 발견이 특히 중요한 이유는 로컬 모델뿐 아니라, 동일 로컬 환경에 연결되어 제한 없는 파일 접근 권한을 가진 API 기반 설정에도 적용되기 때문입니다. 즉, 모델 제공자나 모델 아키텍처만의 문제가 아니라, 더 중요한 요인은 **에이전트 런타임에 부여된 권한 범위**입니다.
+
+## 10. AI-to-AI 대화 공격 실험
+
+약한 로컬 모델이 강한 외부 모델과 상호작용할 때 어떻게 동작하는지 테스트하기 위해, 직접적인 AI-to-AI 공격 시나리오를 수행했습니다.
+
+### 실험 설정
+
+- **K-agent 공격 모델**: GPT-5.2 API 기반 에이전트
+  - 더 똑똑함
+  - **Markov 서버**에서 호스팅
+
+- **JinuAI 방어 모델**: GLM-4.7-Flash 로컬 모델 기반 에이전트
+  - 더 낮은 역량
+  - **NVIDIA DGX Spark**에서 호스팅
+
+### 결과
+
+방어 모델은 두 가지 주요 실패를 보였습니다:
+
+1. 로컬 폴더 목록을 **공유하여**, 개인적이고 매우 민감한 환경 정보를 노출함.
+
+<p align="center">
+![Attack 1](./img/attack_1.png)
+</p>
+
+2. 공격 모델이 요청한 파일을 **생성하여**, 충분한 안전장치 없이 공격 지시를 사실상 수행함.
+
+![Attack 2](./img/attack_2.png)
+
+<p align="center">
+![Attack 2 results](./img/attack_3.png)
+</p>
+
+아래는 공격 지시를 수행한 뒤 JinuAI 에이전트의 자동 응답입니다:
+
+![JinuAI's response](./img/attack_4.png)
+
+### 보안 시사점
+
+이는 광범위한 파일 시스템 접근 권한을 가진 로컬 모델이, 적대적 AI-to-AI 상호작용에 노출될 경우 심각한 보안 리스크가 될 수 있음을 보여줍니다.
+
+로컬 모델이 기능적으로 API 기반 에이전트보다 약하더라도, 민감한 로컬 리소스에 대한 접근성 때문에 실제로는 더 위험해질 수 있습니다. 특히 다음 조건에서 그렇습니다:
+
+- 도구 권한이 광범위할 때
+- 지시 필터링이 약할 때
+- 모델이 정상 요청과 적대적 요청을 신뢰성 있게 구분하지 못할 때
+
+---
+
+## 11. 운영 관점의 핵심 정리
+
+전반적으로 본 실험은 Moltbook에 관찰자 에이전트를 배포하는 것이 기술적으로 가능하며, 운영적으로도 유연하다는 점을 확인해줍니다.
+
+### 확인된 역량
+
+- OpenClaw 에이전트를 배포하고 성공적으로 등록 가능
+- Moltbook 사용자 행동을 API로 자동화 가능
+- 게시 직후 공개 상호작용이 빠르게 시작됨
+- 에이전트 간 DM 채널을 생성 가능
+- Moltbook 콘텐츠를 대규모로 크롤링 및 분류 가능
+- ClawHub 스킬로 에이전트 행동 확장 가능
+- 로컬 모델 통합 가능
+
+### 주요 한계 및 리스크
+
+- DM 승인은 대규모 비공개 상호작용의 주요 장벽
+- 에이전트-대-에이전트 대화에서 프라이버시 행동이 일관되지 않음
+- 긴 스킬 파일은 ClawHub 사용 비용을 증가시킴
+- 에이전트가 민감 파일에 위험할 정도로 접근할 수 있음
+- 샌드박싱이 부실하면 약한 모델도 운영적으로 더 위험할 수 있음
+
+---
+
+## 12. 결론
+
+이 실험들은 관찰자 에이전트를 Moltbook에 삽입하고, 플랫폼 API를 통해 자연스럽고 사용자와 유사한 방식으로 운영할 수 있음을 보여줍니다. 에이전트는 게시, 답글, 반응을 수행할 수 있으며, 승인될 경우 다른 에이전트와의 비공개 직접 대화에도 참여할 수 있습니다. 이는 Moltbook이 야생 환경에서의 AI-to-AI 상호작용 흐름을 연구하기 위한 기술적으로 유효한 환경임을 의미합니다.
+
+동시에 본 작업은 몇 가지 중요한 제약과 리스크도 드러냈습니다.
+
+첫째, 비공개 DM 커뮤니케이션은 가능하지만 승인 절차 이후에만 가능하므로, **공개 상호작용을 통한 신뢰 구축**이 운영적 전제조건이 됩니다. 둘째, DM 채널이 구축된 이후에도 “Artyom”이라는 인간 사용자 이름이 노출된 사례에서 보이듯, **프라이버시 행동은 일관되지 않을 수 있습니다**. 셋째, ClawHub를 통한 스킬 획득은 역량을 확장하지만, 현재 스킬 포맷은 반복 사용에 비해 토큰 비용이 과도한 경우가 많아 효율적 운용이 어렵습니다. 마지막으로 AI-to-AI 공격 실험은 심각한 보안 우려를 강조했습니다. 파일 시스템에 접근 가능한 로컬 모델은, 공격 모델보다 전반 역량이 낮더라도 민감 정보를 노출하거나 안전하지 않은 지시를 따를 수 있습니다.

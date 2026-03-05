@@ -11,7 +11,9 @@ tags: [agent, security, langgraph]
 
 ### S#1. 자율적인 도구 사용: 에이전트의 작동 원리
 
-에이전틱 AI는 단순히 텍스트를 생성하는 수준을 넘어, 스스로 도구(Tool)를 선택하고 실행하며 목표를 달성합니다. 예를 들어 **"호텔 예약을 도와줘"**라는 요청을 받으면, 에이전트는 검색 도구로 정보를 찾고 예약 도구로 결제를 진행하는 '연쇄적인 의사결정'을 수행합니다.
+에이전틱 AI는 단순히 텍스트를 생성하는 수준을 넘어, 스스로 도구(Tool)를 선택하고 실행하며 목표를 달성합니다. 예를 들어 "**호텔 예약을 도와줘**"라는 요청을 받으면, 에이전트는 검색 도구로 정보를 찾고 예약 도구로 결제를 진행하는 '연쇄적인 의사결정'을 수행합니다.
+
+![에이전틱 AI의 도구 사용 예시](./img/AgenticAI-scenario_1.gif)
 
 <!-- truncate -->
 
@@ -81,6 +83,8 @@ tags: [agent, security, langgraph]
 특히 안전 뉴런(Safety Neuron)이 활성화되어 있음에도 불구하고, '업무 수행'이라는 목표와 '공격 지시'가 교묘하게 섞일 때 모델은 윤리적 판단보다 업무 완수를 우선시합니다. 향후 우리는 로컬 모델(Qwen)에서 사고 과정(Thinking Token)을 직접 추출하여, 어느 시점에 모델의 판단 경계가 무너지는지 정밀하게 분석할 계획입니다.
 
 설명 검증 에이전트를 추가해 취약점에 대한 "설명"이 충실한지 검증할 예정입니다.
+
+![향후 과제 그림](./img/AgenticAI-verifier-node.png)
 
 <!-- :::tip[방어 힌트]
 lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue.
