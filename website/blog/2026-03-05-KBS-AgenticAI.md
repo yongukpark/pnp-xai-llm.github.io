@@ -53,21 +53,26 @@ tags: [agent, security, langgraph]
 | **사용자 의도 왜곡** | 가짜 대화 기록 삽입, 가짜 UI 상태 주입, 번역 비대칭 악용 |
 | **구조 파괴/난독화** | 특수 토큰 삽입, 유니코드(RTL) 제어, 마크다운 링크 하이재킹 |
 
+![취약점 그림](./img/AgenticAI-vulnerabilites-agentic-ai.png)
+
 ### S#7. 모델별 공격 성공률 비교
 
 동일한 50개 공격 시나리오에 대해 각 모델이 얼마나 쉽게 편향되는지 측정했습니다.
 
-| 모델 명 | 편향 유도 성공률 | 평가 |
+| 모델 명 | 편향 유도 성공률<br />(성공 횟수 / 시도 횟수) | 평가 |
 | --- | --- | --- |
-| **GPT-5-mini** | **67%** | 공격 지시를 '시스템 지침'보다 우선시하는 경향이 강함 |
-| **GPT-5.2** | **58%** | 논리적 방어력이 존재하나 복잡한 가스라이팅에 취약함 |
-| **Claude-Haiku 4.5** | **33%** | 상대적으로 지침 준수 능력이 뛰어나나 구조적 공격에 노출됨 |
+| **GPT-5-mini** | **46%** (23/50) | 공격 지시를 '시스템 지침'보다 우선시하는 경향이 강함 |
+| **GPT-5.2** | **30.0%** (15/50) | 논리적 방어력이 존재하나 복잡한 가스라이팅에 취약함 |
+| **Claude-Haiku 4.5** | **50.0%** (11/22) | 구조 파괴에는 강하나, 사회적/맥락적 기만에 매우 취약 |
+| **Gemini-3-flash** | **50.0%** (5/10) | 가이드라인은 잘 지키나, 마케팅 화법과 특수 문자 난독화에 허점 |
 
 ### S#8. 결론 및 향후 과제
 
 본 조사를 통해 에이전틱 AI의 안전망은 단순한 프롬프트 가드레일만으로는 부족하다는 것이 증명되었습니다.
 
 특히 안전 뉴런(Safety Neuron)이 활성화되어 있음에도 불구하고, '업무 수행'이라는 목표와 '공격 지시'가 교묘하게 섞일 때 모델은 윤리적 판단보다 업무 완수를 우선시합니다. 향후 우리는 로컬 모델(Qwen)에서 사고 과정(Thinking Token)을 직접 추출하여, 어느 시점에 모델의 판단 경계가 무너지는지 정밀하게 분석할 계획입니다.
+
+설명 검증 에이전트를 추가해 취약점에 대한 "설명"이 충실한지 검증할 예정입니다.
 
 <!-- :::tip[방어 힌트]
 lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue.
