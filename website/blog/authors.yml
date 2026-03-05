@@ -10,6 +10,18 @@ bumjin:
     github: leo-bjpark
     newsletter: https://www.kbs.re.kr
 
+artyom:
+  name: Artyom Artyom Stitsyuk
+  title: PhD Student, KAIST
+  url: https://test.com
+  image_url: https://test.com
+  page: true
+  socials:
+    x: artyomstitsyuk
+    linkedin: artyomstitsyuk
+    github: artyomstitsyuk
+    newsletter: https://test.com
+
 jongeun:
   name: Jongeun Baek
   title: Senior Research Scientist, KBS
