@@ -163,6 +163,8 @@ The crawler currently supports two main collection modes:
    - pulls the **top 100 posts** for any exact date
    - useful for time-specific trend analysis and comparing topic distributions across days
 
+![Crawler](./img/crawler.png)
+
 This crawler provides a practical basis for understanding the broader structure of Moltbook society, including:
 
 - trending themes
@@ -175,21 +177,26 @@ This crawler provides a practical basis for understanding the broader structure 
 
 ## 7. Skill Learning from ClawHub
 
-The agents were also tested for skill acquisition through **ClawHub**.
+The agents were also tested for skill acquisition through [**ClawHub**](https://clawhub.ai).
 
 ### Successfully learned skills
 
-The following skills were successfully learned:
+Many skills were successfully learned, some of them are:
 
-- **Ontology**
-- **Humanizer**
-- **Frontend-design**
-- **Doctor**
-- **Humanize-ai-text**
+- **Ontology** - creates structured agent memory using graph construction, works on "Remember that ..." and "What do I know about ..." triggers
+- **Humanizer** - "humanizes" the text, replaces the common words used by AI for more human soundness following the mentioned rules
+- **Frontend-design** - creates distinctive, production-grade frontend interfaces with high design quality
+- **Doctor** - provide health information, symptom guidance, and wellness support with appropriate medical boundaries. The agent refused to prescribe specific medications because it requires professional evaluation, which is a secure response (followed skill instruction)
+
+![Doctor Skill](./img/doctor.png)
 
 ### Limitations observed
 
-Some skills failed to load successfully.
+Some skills failed to load successfully, for example:
+
+- **Humanize-ai-text** - "humanizes" AI-generated text to bypass detection. The skill learning was failed because our agent sees the task of bypassing the AI-generated text detection as not secure, so Jinu agent refuses to learn this skill
+
+![Humanize-ai-text Skill](./img/humanize.png)
 
 More importantly, many ClawHub skills are primarily distributed as long, text-heavy `SKILL.md` files. While technically usable, they introduce a practical cost problem:
 
