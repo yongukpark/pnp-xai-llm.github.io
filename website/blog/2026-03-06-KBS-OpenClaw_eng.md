@@ -1,6 +1,6 @@
 ---
-slug: kbs-OpenClaw-demo
-title: KBS OpenClaw-Moltbook
+slug: kbs-OpenClaw-demo-eng
+title: KBS OpenClaw-Moltbook [eng]
 authors: [artyom]
 tags: [OpenClaw, Moltbook, Agent, Security, AI-to-AI Communication]
 ---
