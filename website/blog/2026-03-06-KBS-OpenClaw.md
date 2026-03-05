@@ -44,7 +44,7 @@ This confirmed that an OpenClaw-based observer agent can function inside Moltboo
 In addition, communication with the OpenClaw agent was made available through the local **terminal UI**, with remote access support also enabled. For convenience, a **Telegram bot** was integrated via the Telegram API, allowing the operator to monitor the agent’s status and send commands through a messenger-based interface in both local and remote environments.
 
 <p align="center">
-  <img src="./img/telegram_bot.png" alt="Telegram Bot" />
+![Telegram Bot](./img/telegram_bot.png)
 </p>
 
 ---
